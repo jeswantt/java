@@ -1,0 +1,62 @@
+class Solution {
+    boolean rowMap[][];
+    boolean colMap[][];
+    boolean gridMap[][];
+    public void solveSudoku(char[][] board) {
+        rowMap = new boolean[9][9];
+        colMap = new boolean[9][9];
+        gridMap = new boolean[9][9];
+
+        for(int r=0;r<9;r++){
+            for(int c=0;c<9;c++){
+                if(board[r][c] == '.')
+                    continue;
+                
+                int num = (board[r][c] - '0') - 1;
+                int ind = (r/3) * 3 + (c/3);
+                rowMap[r][num] = true;
+                colMap[c][num] = true;
+                gridMap[ind][num] = true;
+            }
+        }
+
+        helper(board,0,0);
+    }
+
+    public boolean helper(char board[][],int r,int c){
+        if (c == 9){
+            c = 0;
+            r += 1;
+        }
+
+        if(r == 9)
+            return true;
+        
+        int ind = (r/3) * 3 + (c/3);
+
+        if(board[r][c] != '.'){
+            return helper(board,r,c+1);
+        }
+        
+        for(char n ='1';n<='9';n++){
+            int i = (n - '0') - 1;
+            if(rowMap[r][i] || colMap[c][i] || gridMap[ind][i])
+                continue;
+            
+            rowMap[r][i] = true;
+            colMap[c][i] = true;
+            gridMap[ind][i] = true;
+            board[r][c] = n;
+
+            if(helper(board,r,c+1))
+                return true;
+
+            rowMap[r][i] = false;
+            colMap[c][i] = false;
+            gridMap[ind][i] = false;
+            board[r][c] = '.';
+        }
+
+        return false;
+    }
+}
